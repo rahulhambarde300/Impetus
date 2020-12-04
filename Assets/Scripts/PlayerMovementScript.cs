@@ -8,6 +8,7 @@ public class PlayerMovementScript : MonoBehaviour
     private Vector3 startPos;
     private Vector3 endPos;
     private Camera cam;
+    private LineRenderer line;
     private bool collided = false;
 
     public float speed = 20;
@@ -15,11 +16,13 @@ public class PlayerMovementScript : MonoBehaviour
 
 
     // Start is called before the first frame update
+    [System.Obsolete]
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
-
+        line = GetComponent<LineRenderer>();
+        line.SetWidth(0.1f, 0.1f);
     }
 
     // Update is called once per frame
@@ -39,6 +42,7 @@ public class PlayerMovementScript : MonoBehaviour
                 //When the player starts dragging ball
                 startPos = t.position;
                 
+                
             }
 
             if(t.phase == TouchPhase.Moved)
@@ -53,8 +57,14 @@ public class PlayerMovementScript : MonoBehaviour
                 {
                     Vector2 position = new Vector2(transform.position.x, transform.position.y);
                     float length = Vector2.Distance(position, hit.point);
-                    Debug.Log("Length : " + length + " Position : " + position + " Hit point : " + hit.point);
-                    Debug.DrawRay(transform.position, direction * (length), Color.green);
+
+                    //Show the path using line renderer
+                    line.enabled = true;
+                    line.SetPosition(0, position + GetComponent<CircleCollider2D>().radius * direction);
+                    line.SetPosition(1, hit.point);
+
+                    //Debug.Log("Length : " + length + " Position : " + position + " Hit point : " + hit.point);
+                    //Debug.DrawRay(transform.position, direction * (length), Color.green);
                 }
             }
 
@@ -63,6 +73,7 @@ public class PlayerMovementScript : MonoBehaviour
                 //When the player stops dragging ball
                 Vector2 direction = (startPos - endPos).normalized;
 
+                line.enabled = false;
                 rb.velocity = direction * speed;
             }
         }
@@ -75,15 +86,18 @@ public class PlayerMovementScript : MonoBehaviour
         if (collision.transform.CompareTag("Wall"))
         {
             //Debug.Log("Collided");
-            if (!collided)
+            if (!collided && rb.velocity != Vector2.zero)
             {
                 collided = true;
+                Debug.Log("Collide");
             }
-            else
+            else if(collided && rb.velocity != Vector2.zero)
             {
                 collided = false;
                 rb.velocity = Vector2.zero;
             }
         }
     }
+
+    
 }
