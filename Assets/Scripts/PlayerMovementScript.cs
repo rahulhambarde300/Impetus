@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerMovementScript : MonoBehaviour
@@ -10,7 +8,7 @@ public class PlayerMovementScript : MonoBehaviour
     private Vector3 endPos;
     private Camera cam;
     private LineRenderer line;
-    private bool collidedOnce = false;
+    private int collisionCount = 0;
     private bool canMove = true;
 
     public float speed = 20;
@@ -102,18 +100,41 @@ public class PlayerMovementScript : MonoBehaviour
         if (collision.transform.CompareTag("Wall"))
         {
             //Debug.Log("Collided");
-            if (!collidedOnce && rb.velocity != Vector2.zero)
+            if (collisionCount == 0  && rb.velocity != Vector2.zero)
             {
-                collidedOnce = true;
+                collisionCount++;
                 Debug.Log("Collide");
             }
-            else if(collidedOnce && rb.velocity != Vector2.zero)
+            else if(collisionCount == 1 && rb.velocity != Vector2.zero)
             {
                 //Ball collided twice and stopped and can move again
-                collidedOnce = false;
+                collisionCount++;
+                collisionCount %= 2;
                 rb.velocity = Vector2.zero;
                 canMove = true;
             }
+        }
+
+        else if (collision.transform.CompareTag("CrumbleWall"))
+        {
+            if (collisionCount == 0 && rb.velocity != Vector2.zero)
+            {
+                //1st bounce collision
+                collisionCount++;
+                Debug.Log("Collide");
+            }
+            else if(collisionCount == 1 && rb.velocity != Vector2.zero)
+            {
+                //2nd bounce collision
+                //Destroy Player
+                Destroy(gameObject);
+
+            }
+        }
+
+        else if (collision.transform.CompareTag("JumperWall"))
+        {
+            //Don't increase collisionCount
         }
     }
 
