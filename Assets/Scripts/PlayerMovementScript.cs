@@ -17,7 +17,7 @@ public class PlayerMovementScript : MonoBehaviour
     public int jumps = 2;
     public Text scoreText;
     public Text jumpsText;
-
+    public UIScript uiScript;
 
     // Start is called before the first frame update
     [System.Obsolete]
@@ -97,6 +97,7 @@ public class PlayerMovementScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log(collision.transform.gameObject);
         if (collision.transform.CompareTag("Wall"))
         {
             //Debug.Log("Collided");
@@ -115,7 +116,7 @@ public class PlayerMovementScript : MonoBehaviour
             }
         }
 
-        else if (collision.transform.CompareTag("CrumbleWall"))
+        if (collision.transform.CompareTag("CrumbleWall"))
         {
             if (collisionCount == 0 && rb.velocity != Vector2.zero)
             {
@@ -132,7 +133,7 @@ public class PlayerMovementScript : MonoBehaviour
             }
         }
 
-        else if (collision.transform.CompareTag("JumperWall"))
+        if (collision.transform.CompareTag("JumperWall"))
         {
             //Don't increase collisionCount
         }
@@ -145,6 +146,11 @@ public class PlayerMovementScript : MonoBehaviour
             score += 1;
             scoreText.text = "Score:" + score;
             collision.transform.GetComponent<PickupScript>().Destroy();
+        }
+
+        if (collision.transform.CompareTag("WinBorder"))
+        {
+            uiScript.Win();
         }
     }
 

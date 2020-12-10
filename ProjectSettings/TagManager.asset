@@ -8,6 +8,7 @@ TagManager:
   - Coin
   - CrumbleWall
   - JumperWall
+  - WinBorder
   layers:
   - Default
   - TransparentFX
