@@ -27,7 +27,8 @@ public class PlayerMovementScript : MonoBehaviour
         cam = Camera.main;
         //Set up line renderer
         line = GetComponent<LineRenderer>();
-        line.SetWidth(0.1f, 0.1f);
+
+        line.SetWidth(0.1f, 0f);
 
         //Initialize the text gameobjects
         scoreText.text = "Score:" + score;
@@ -68,8 +69,10 @@ public class PlayerMovementScript : MonoBehaviour
 
                     //Show the path using line renderer
                     line.enabled = true;
-                    line.SetPosition(0, position + GetComponent<CircleCollider2D>().radius * direction);
+                    line.SetPosition(0, position);
                     line.SetPosition(1, hit.point);
+
+
 
                     //Debug.Log("Length : " + length + " Position : " + position + " Hit point : " + hit.point);
                     //Debug.DrawRay(transform.position, direction * (length), Color.green);
@@ -97,14 +100,14 @@ public class PlayerMovementScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(collision.transform.gameObject);
+        //Debug.Log(collision.transform.gameObject);
         if (collision.transform.CompareTag("Wall"))
         {
             //Debug.Log("Collided");
             if (collisionCount == 0  && rb.velocity != Vector2.zero)
             {
                 collisionCount++;
-                Debug.Log("Collide");
+                //Debug.Log("Collide");
             }
             else if(collisionCount == 1 && rb.velocity != Vector2.zero)
             {
@@ -122,13 +125,14 @@ public class PlayerMovementScript : MonoBehaviour
             {
                 //1st bounce collision
                 collisionCount++;
-                Debug.Log("Collide");
+                //Debug.Log("Collide");
             }
             else if(collisionCount == 1 && rb.velocity != Vector2.zero)
             {
                 //2nd bounce collision
                 //Destroy Player
                 Destroy(gameObject);
+               
 
             }
         }
